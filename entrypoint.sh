@@ -3,7 +3,7 @@
 TESTFILE_PATH=$1
 OUTPUTREPORTSFOLDER=$2
 LOGFILE='jmeter_log.log'
-ADDITIONAL_ARGS="${@:2}"
+ADDITIONAL_ARGS="${@:3}"
 echo "Using Test File Path $TESTFILE_PATH and Output Folder $OUTPUTREPORTSFOLDER with additional args $ADDITIONAL_ARGS"
 
 # Export JAVA_HOME Variable within Entrypoint
