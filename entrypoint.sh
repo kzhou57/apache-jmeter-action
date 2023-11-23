@@ -1,15 +1,10 @@
 #!/bin/bash
 
-TESTFILE_PATH=$3
-
-echo "Using Test File Path $TESTFILE_PATH"
-
-# Removing first 3 arguments from Entrypoint. Need to find a better way to do this
-set -- "${@:1:0}" "${@:2}"
-set -- "${@:1:0}" "${@:2}"
-set -- "${@:1:0}" "${@:2}"
-
-echo $@
+TESTFILE_PATH=$1
+OUTPUTREPORTSFOLDER=$2
+LOGFILE='jmeter_log.log'
+ADDITIONAL_ARGS="${@:2}"
+echo "Using Test File Path $TESTFILE_PATH and Output Folder $OUTPUTREPORTSFOLDER with additional args $ADDITIONAL_ARGS"
 
 # Export JAVA_HOME Variable within Entrypoint
 export JAVA_HOME="/usr/lib/jvm/java-9-openjdk"
@@ -26,19 +21,21 @@ fi
 
 status=0
 
-if [[ $TESTFILE_PATH == *.jmx ]]
+if [ ! -d "$TESTFILE_PATH" ]
 then
   echo "Single file specified so only running one test"
-  echo "Running jmeter -n -t $TESTFILE_PATH $@"
-  jmeter -n -t $TESTFILE_PATH $@
+  ARGS="-n -t $TESTFILE_PATH -l $LOGFILE -e -f -o $OUTPUTREPORTSFOLDER $ADDITIONAL_ARGS"
+  echo "Running jmeter $ARGS"
+  jmeter $ARGS
   status=$?
 else
-  BASEFILE_PATH=$(basename $TESTFILE_PATH)
-  echo "Folder specified - Running each JMX File In Folder"
-  for FILE in $(find $BASEFILE_PATH -name '*.jmx')
+  echo "Folder specified - Running each JMX File In Folder : $TESTFILE_PATH"
+  FORCE_DELETE_RESULT_FILE='-f'
+  for FILE in $(find $TESTFILE_PATH -name '*.jmx')
   do
-    echo "Running test with $FILE"
-    jmeter -n -t $FILE $@
+    ARGS="-n -t $FILE -l $LOGFILE $FORCE_DELETE_RESULT_FILE $ADDITIONAL_ARGS"
+    echo "Running jmeter $ARGS"
+    jmeter $ARGS
     test_run=$?
     # If any of the previous tests haven't failed
     if [ "$test_run" == "0" ] && [ "$status" == "1" ]
@@ -46,7 +43,13 @@ else
       status=1 # Set one of the tests failing
     fi
     echo "Test $FILE has exited with status code $test_run"
+    # Clear the FORCE_DELETE_RESULT_FILE flag, so that the next test result file is appended to the previous one
+    FORCE_DELETE_RESULT_FILE=''
   done
+  # generate report
+  ARGS="-g $LOGFILE -f -o $OUTPUTREPORTSFOLDER $ADDITIONAL_ARGS"
+  echo "Generating report with jmeter $ARGS"
+  jmeter $ARGS
 fi
 
 error=0 # Default error status code
