@@ -1,6 +1,6 @@
 ---
-name: Apache JMeter
-description: Runs an Apache JMeter test case
+name: Yet Another Apache JMeter
+description: Runs an Apache JMeter test case, improved from Apache JMeter with better support of running from folder
 author: Ravindra Bhadti <rbhadti@gmail.com>
 
 inputs:
