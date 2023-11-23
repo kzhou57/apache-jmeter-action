@@ -31,7 +31,7 @@ then
 else
   echo "Folder specified - Running each JMX File In Folder : $TESTFILE_PATH"
   FORCE_DELETE_RESULT_FILE='-f'
-  for FILE in $(find $TESTFILE_PATH -name '*.jmx')
+  find $TESTFILE_PATH -name '*.jmx' -print0 |while read -r -d '' FILE
   do
     ARGS="-n -t $FILE -l $LOGFILE $FORCE_DELETE_RESULT_FILE $ADDITIONAL_ARGS"
     echo "Running jmeter $ARGS"
