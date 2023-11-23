@@ -58,14 +58,7 @@ runs:
     DEPENDENCY_FOLDER: ${{ inputs.dependencyFolder }}
     REPORT_FOLDER: ${{ inputs.outputReportsFolder }}
   args:
-    - "-n"
-    - "-t"
     - "${{ inputs.testFilePath }}"
-    - "-l"
-    - "jmeter_log.log"
-    - "-e"
-    - "-f"
-    - "-o"
     - "${{ inputs.outputReportsFolder }}"
     - "${{ inputs.args }}"
 
