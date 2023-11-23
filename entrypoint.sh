@@ -26,16 +26,15 @@ fi
 
 status=0
 
-if [[ $TESTFILE_PATH == *.jmx ]]
+if [ ! -d "$TESTFILE_PATH" ]
 then
   echo "Single file specified so only running one test"
   echo "Running jmeter -n -t $TESTFILE_PATH $@"
   jmeter -n -t $TESTFILE_PATH $@
   status=$?
 else
-  BASEFILE_PATH=$(basename $TESTFILE_PATH)
-  echo "Folder specified - Running each JMX File In Folder"
-  for FILE in $(find $BASEFILE_PATH -name '*.jmx')
+  echo "Folder specified - Running each JMX File In Folder : $TESTFILE_PATH"
+  for FILE in $(find $TESTFILE_PATH -name '*.jmx')
   do
     echo "Running test with $FILE"
     jmeter -n -t $FILE $@
