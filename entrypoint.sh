@@ -24,7 +24,7 @@ status=0
 if [ ! -d "$TESTFILE_PATH" ]
 then
   echo "Single file specified so only running one test"
-  ARGS="-n -t \"$TESTFILE_PATH\" -l $LOGFILE -e -f -o $OUTPUTREPORTSFOLDER $ADDITIONAL_ARGS"
+  ARGS="-n -t $TESTFILE_PATH -l $LOGFILE -e -f -o $OUTPUTREPORTSFOLDER $ADDITIONAL_ARGS"
   echo "Running jmeter $ARGS"
   jmeter $ARGS
   status=$?
@@ -33,7 +33,7 @@ else
   FORCE_DELETE_RESULT_FILE='-f'
   find "$TESTFILE_PATH" -name '*.jmx' -print0 |while read -r -d '' FILE
   do
-    ARGS="-n -t \"$FILE\" -l $LOGFILE $FORCE_DELETE_RESULT_FILE $ADDITIONAL_ARGS"
+    ARGS="-n -t $FILE -l $LOGFILE $FORCE_DELETE_RESULT_FILE $ADDITIONAL_ARGS"
     echo "Running jmeter $ARGS"
     jmeter $ARGS
     test_run=$?
